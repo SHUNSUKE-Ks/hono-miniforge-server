@@ -1,0 +1,21 @@
+{
+  "id":            "PZL-005",
+  "title":         "シーザー暗号",
+  "category":      "WORD",
+  "difficulty":    2,
+  "question_text": "暗号文をシーザー暗号で解読しなさい。シフト数を調整して意味のある言葉を見つけよう。",
+  "extra": {
+    "cipher_text": "KHOOR",
+    "answer_text": "HELLO",
+    "alphabet": "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+  },
+  "initial_state": {"shift": 0},
+  "answer_state":  {"shift": 3},
+  "hints": [
+    {"step": 1, "cost": 1, "text": "シーザー暗号は文字を一定数ずらして暗号化する"},
+    {"step": 2, "cost": 1, "text": "K は H より3文字後ろにある"},
+    {"step": 3, "cost": 2, "text": "シフト数は3だ"}
+  ],
+  "clear_text":     "「HELLO！暗号が解けた！」",
+  "reward_item_id": "item_cipher_key"
+}

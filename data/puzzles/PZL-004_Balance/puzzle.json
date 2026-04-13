@@ -1,0 +1,21 @@
+{
+  "id":            "PZL-004",
+  "title":         "天秤パズル",
+  "category":      "MATH",
+  "difficulty":    3,
+  "question_text": "天秤を釣り合わせる重りの重さを答えなさい。左皿：金貨(5g)＋銀貨(3g)、右皿：宝石(7g)＋?",
+  "extra": {
+    "left":  [{"name": "金貨", "weight": 5, "color": "#ffd700"}, {"name": "銀貨", "weight": 3, "color": "#c0c0c0"}],
+    "right": [{"name": "宝石", "weight": 7, "color": "#40c0ff"}, {"name": "?", "weight": null, "color": "#888888"}],
+    "options": [0, 1, 2, 3]
+  },
+  "initial_state": {"selected": null},
+  "answer_state":  {"selected": 1},
+  "hints": [
+    {"step": 1, "cost": 1, "text": "左皿の合計重さを計算しよう"},
+    {"step": 2, "cost": 1, "text": "左: 5 + 3 = 8g、右: 7 + ? = 8g"},
+    {"step": 3, "cost": 2, "text": "? = 8 - 7 = 1g"}
+  ],
+  "clear_text":     "「完璧な計算だ！天秤が釣り合った」",
+  "reward_item_id": "item_balance_gem"
+}

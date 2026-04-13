@@ -1,0 +1,20 @@
+{
+  "id":            "PZL-010",
+  "title":         "電球スイッチ",
+  "category":      "LOGIC",
+  "difficulty":    2,
+  "question_text": "スイッチを押して全ての電球を点灯させなさい。スイッチを押すと自分と隣接するマスが切り替わる。",
+  "extra": {
+    "cols": 3,
+    "rows": 3
+  },
+  "initial_state": {"lights": [true,false,true,false,false,false,true,false,true]},
+  "answer_state":  {"lights": [true,true,true,true,true,true,true,true,true]},
+  "hints": [
+    {"step": 1, "cost": 1, "text": "中央のスイッチを押すと5マスが切り替わる"},
+    {"step": 2, "cost": 1, "text": "まず中央から始めてみよう"},
+    {"step": 3, "cost": 2, "text": "中央(1回)→上中央(1回)→左中央(1回)→右中央(1回)→下中央(1回)"}
+  ],
+  "clear_text":     "「全ての電球が点灯した！謎が解けたぞ」",
+  "reward_item_id": "item_light_bulb"
+}

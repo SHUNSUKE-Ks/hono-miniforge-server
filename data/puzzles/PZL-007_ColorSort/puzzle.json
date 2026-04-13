@@ -1,0 +1,20 @@
+{
+  "id":            "PZL-007",
+  "title":         "カラーソート",
+  "category":      "SEQUENCE",
+  "difficulty":    3,
+  "question_text": "チューブを操作して同じ色のボールを同じチューブにまとめなさい。上のボールしか動かせない。",
+  "extra": {
+    "colors": ["red", "blue", "green"],
+    "tube_capacity": 3
+  },
+  "initial_state": {"tubes": [[0,1,2],[2,0,1],[1,2,0]]},
+  "answer_state":  {"tubes": [[0,0,0],[1,1,1],[2,2,2]]},
+  "hints": [
+    {"step": 1, "cost": 1, "text": "まず1番目のチューブの一番上（緑）を移動させよう"},
+    {"step": 2, "cost": 1, "text": "同じ色を同じチューブに集めることを意識しよう"},
+    {"step": 3, "cost": 2, "text": "空のスペースを作ってから入れ替えると楽になる"}
+  ],
+  "clear_text":     "「見事な整理術だ！色が揃った」",
+  "reward_item_id": "item_color_prism"
+}

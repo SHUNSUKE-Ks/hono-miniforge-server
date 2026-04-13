@@ -1,0 +1,25 @@
+{
+  "id":            "PZL-006",
+  "title":         "影絵マッチ",
+  "category":      "VISUAL",
+  "difficulty":    2,
+  "question_text": "4つの図形をその影（シルエット）と正しくマッチングさせなさい。",
+  "extra": {
+    "items": [
+      {"id": 0, "name": "星",    "shape": "star",     "color": "#ffd700"},
+      {"id": 1, "name": "ハート","shape": "heart",    "color": "#ff6080"},
+      {"id": 2, "name": "月",   "shape": "crescent", "color": "#c0c0ff"},
+      {"id": 3, "name": "矢印", "shape": "arrow",    "color": "#80ff80"}
+    ],
+    "silhouettes": [2, 0, 3, 1]
+  },
+  "initial_state": {"matches": {}},
+  "answer_state":  {"matches": {"0":2,"1":0,"2":3,"3":1}},
+  "hints": [
+    {"step": 1, "cost": 1, "text": "星の影を先に探してみよう"},
+    {"step": 2, "cost": 1, "text": "ハートの影は左右対称の形をしている"},
+    {"step": 3, "cost": 2, "text": "星→3番目、ハート→4番目のシルエット"}
+  ],
+  "clear_text":     "「すべての影が一致した！さすがの観察眼だ」",
+  "reward_item_id": "item_shadow_lens"
+}

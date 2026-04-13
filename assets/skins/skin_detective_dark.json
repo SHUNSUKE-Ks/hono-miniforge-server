@@ -1,0 +1,32 @@
+{
+  "skin_id": "detective_dark",
+  "tile": {
+    "bg":      "#0a1628",
+    "border":  "#8050c8",
+    "color":   "#c0a0ff",
+    "font":    "monospace",
+    "size":    72,
+    "padding": 8
+  },
+  "empty_slot": {
+    "bg":           "#000308",
+    "border":       "#332255",
+    "border_style": "dashed"
+  },
+  "board": {
+    "bg":      "#050d1a",
+    "padding": 12
+  },
+  "text": {
+    "primary":   "#c0a0ff",
+    "secondary": "#8070b0",
+    "accent":    "#ff9040"
+  },
+  "button": {
+    "bg":     "#1a0a38",
+    "border": "#8050c8",
+    "color":  "#c0a0ff",
+    "hover":  "#2a1a48"
+  },
+  "icon": null
+}

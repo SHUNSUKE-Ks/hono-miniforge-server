@@ -1,0 +1,29 @@
+{
+  "id":            "PZL-001",
+  "title":         "数字の橋渡し",
+  "category":      "LOGIC",
+  "difficulty":    1,
+  "question_text": "島と島を橋でつなごう。島の数字はつながる橋の本数を示している。",
+  "extra": {
+    "islands": [
+      {"id": 0, "row": 0, "col": 0, "target": 2},
+      {"id": 1, "row": 0, "col": 2, "target": 3},
+      {"id": 2, "row": 2, "col": 0, "target": 1},
+      {"id": 3, "row": 2, "col": 2, "target": 2},
+      {"id": 4, "row": 0, "col": 4, "target": 2},
+      {"id": 5, "row": 2, "col": 4, "target": 2}
+    ],
+    "connections": [
+      [0,1],[1,4],[0,2],[1,3],[3,5],[4,5]
+    ]
+  },
+  "initial_state": {"bridges": {}},
+  "answer_state":  {"bridges": {"0-1":1,"0-2":1,"1-3":1,"1-4":1,"3-5":1,"4-5":1}},
+  "hints": [
+    {"step": 1, "cost": 1, "text": "まず左の島 (2) から橋を2本伸ばそう"},
+    {"step": 2, "cost": 1, "text": "真ん中の島 (3) には合計3本の橋が必要"},
+    {"step": 3, "cost": 2, "text": "すべての橋は縦か横にしか引けない"}
+  ],
+  "clear_text":     "「見事だ！橋が渡ったぞ」",
+  "reward_item_id": "item_bridge_key"
+}

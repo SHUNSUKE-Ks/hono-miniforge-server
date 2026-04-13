@@ -1,0 +1,25 @@
+{
+  "id":            "PZL-003",
+  "title":         "マッチ棒パズル",
+  "category":      "LOGIC",
+  "difficulty":    2,
+  "question_text": "マッチ棒を1本だけ動かして正しい等式を作りなさい。",
+  "extra": {
+    "equation": "6 - 3 = 9",
+    "options": [
+      {"label": "A", "equation": "8 - 3 = 5", "correct": false},
+      {"label": "B", "equation": "6 - 3 = 3", "correct": true},
+      {"label": "C", "equation": "6 + 3 = 9", "correct": false},
+      {"label": "D", "equation": "0 - 3 = 9", "correct": false}
+    ]
+  },
+  "initial_state": {"selected": null},
+  "answer_state":  {"selected": "B"},
+  "hints": [
+    {"step": 1, "cost": 1, "text": "9 のマッチ棒に注目してみよう"},
+    {"step": 2, "cost": 1, "text": "9 から1本外すと 3 になる"},
+    {"step": 3, "cost": 2, "text": "6 - 3 = 3 が正解だ"}
+  ],
+  "clear_text":     "「その通り！1本動かすだけで真実が見える」",
+  "reward_item_id": "item_match_evidence"
+}

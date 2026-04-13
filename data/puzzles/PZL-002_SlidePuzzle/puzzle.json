@@ -1,0 +1,16 @@
+{
+  "id":            "PZL-002",
+  "title":         "スライドパズル",
+  "category":      "SLIDE",
+  "difficulty":    2,
+  "question_text": "バラバラになった時計の文字盤を元に戻しなさい",
+  "initial_state": [3, 1, 2, 6, 0, 5, 7, 8, 4],
+  "answer_state":  [1, 2, 3, 4, 5, 6, 7, 8, 0],
+  "hints": [
+    { "step": 1, "cost": 1, "text": "まず左上から動かそう" },
+    { "step": 2, "cost": 1, "text": "1→2→3の順で左上から" },
+    { "step": 3, "cost": 2, "text": "最初の手順: 3を左に動かす" }
+  ],
+  "clear_text":     "「さすがだ！これが時計塔の鍵だよ」",
+  "reward_item_id": "item_clocktower_key"
+}

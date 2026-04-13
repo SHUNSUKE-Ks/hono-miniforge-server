@@ -1,0 +1,21 @@
+{
+  "id":            "PZL-008",
+  "title":         "神経衰弱",
+  "category":      "MEMORY",
+  "difficulty":    1,
+  "question_text": "カードをめくってペアを見つけよう。すべてのペアを揃えたらクリア。",
+  "extra": {
+    "pairs": ["★","♦","♠","♣","⚡","🔑","🗡","💎"],
+    "cols": 4,
+    "rows": 4
+  },
+  "initial_state": {"matched": [], "layout": [0,1,2,3,4,5,6,7,0,1,2,3,4,5,6,7]},
+  "answer_state":  {"matched": [0,1,2,3,4,5,6,7]},
+  "hints": [
+    {"step": 1, "cost": 1, "text": "めくったカードの位置を頭の中に記憶しよう"},
+    {"step": 2, "cost": 1, "text": "同じカードを2枚めくるとペア成立"},
+    {"step": 3, "cost": 2, "text": "最初に全部めくって位置を確認するのも手"}
+  ],
+  "clear_text":     "「完璧な記憶力だ！すべてのペアが揃った」",
+  "reward_item_id": "item_memory_crystal"
+}
