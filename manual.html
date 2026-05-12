@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>マニュアル — Hono MiniForge</title>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<style>
+/* =====================================================
+   BASE
+===================================================== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg:        #0d1117;
+  --bg-card:   #161b22;
+  --border:    #30363d;
+  --text:      #e6edf3;
+  --text-sub:  #8b949e;
+  --accent:    #7c3aed;
+  --accent-lt: #a78bfa;
+  --gold:      #fbbf24;
+  --green:     #34d399;
+  --blue:      #60a5fa;
+  --red:       #f87171;
+  --code-bg:   #161b22;
+}
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Segoe UI', 'Noto Sans JP', system-ui, sans-serif;
+  font-size: 15px;
+  line-height: 1.75;
+  padding-bottom: 60px;
+}
+
+/* =====================================================
+   HEADER
+===================================================== */
+.header {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(13,17,23,0.96);
+  border-bottom: 1px solid var(--border);
+  padding: 12px 16px;
+  display: flex; align-items: center; gap: 12px;
+  backdrop-filter: blur(10px);
+}
+.header-logo {
+  font-size: 13px; font-weight: 700;
+  color: var(--accent-lt); letter-spacing: 1px;
+}
+.header-title {
+  font-size: 15px; font-weight: 700;
+  color: var(--text);
+}
+.back-btn {
+  margin-left: auto;
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-sub);
+  padding: 4px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex; align-items: center; gap: 4px;
+  font-family: inherit;
+  transition: border-color .15s, color .15s;
+}
+.back-btn:hover { border-color: var(--accent); color: var(--accent-lt); }
+
+/* =====================================================
+   TAB NAV
+===================================================== */
+.tab-nav {
+  display: flex;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-card);
+  padding: 0 16px;
+  gap: 4px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.tab-btn {
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--text-sub);
+  padding: 12px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  font-family: inherit;
+  transition: color .15s, border-color .15s;
+  display: flex; align-items: center; gap: 6px;
+}
+.tab-btn:hover { color: var(--text); }
+.tab-btn.active {
+  color: var(--accent-lt);
+  border-bottom-color: var(--accent);
+}
+
+/* =====================================================
+   CONTENT AREA
+===================================================== */
+.content {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 28px 16px;
+}
+
+/* loading */
+.loading {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--text-sub);
+  font-size: 13px;
+}
+.spinner {
+  display: inline-block;
+  width: 20px; height: 20px;
+  border: 2px solid var(--border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin .8s linear infinite;
+  margin-bottom: 12px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* =====================================================
+   MARKDOWN STYLES
+===================================================== */
+.md h1 {
+  font-size: 24px; font-weight: 800;
+  color: var(--text);
+  border-bottom: 2px solid var(--border);
+  padding-bottom: 10px;
+  margin-bottom: 20px;
+}
+.md h2 {
+  font-size: 18px; font-weight: 700;
+  color: var(--accent-lt);
+  margin: 36px 0 14px;
+  display: flex; align-items: center; gap: 8px;
+}
+.md h2::before {
+  content: '';
+  display: inline-block;
+  width: 4px; height: 18px;
+  background: var(--accent);
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+.md h3 {
+  font-size: 15px; font-weight: 700;
+  color: var(--gold);
+  margin: 24px 0 10px;
+}
+.md h4 {
+  font-size: 14px; font-weight: 600;
+  color: var(--text-sub);
+  margin: 18px 0 8px;
+}
+
+.md p {
+  margin-bottom: 14px;
+  color: var(--text);
+}
+
+.md ul, .md ol {
+  margin: 10px 0 16px 20px;
+}
+.md li {
+  margin-bottom: 6px;
+  color: var(--text);
+}
+.md li::marker { color: var(--accent-lt); }
+
+/* Inline code */
+.md code {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  color: #a3e635;
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-family: 'Consolas', 'Fira Code', monospace;
+  font-size: 13px;
+}
+
+/* Code block */
+.md pre {
+  background: #010409;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 16px;
+  overflow-x: auto;
+  margin: 14px 0 20px;
+  position: relative;
+}
+.md pre code {
+  background: transparent;
+  border: none;
+  padding: 0;
+  color: #a3e635;
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+/* Table */
+.md table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 14px 0 20px;
+  font-size: 13px;
+  display: block;
+  overflow-x: auto;
+}
+.md th {
+  background: rgba(124,58,237,0.12);
+  color: var(--accent-lt);
+  font-weight: 700;
+  padding: 8px 14px;
+  border: 1px solid var(--border);
+  text-align: left;
+  white-space: nowrap;
+}
+.md td {
+  padding: 8px 14px;
+  border: 1px solid var(--border);
+  color: var(--text);
+  vertical-align: top;
+}
+.md tr:nth-child(even) td { background: rgba(255,255,255,0.02); }
+
+/* Blockquote */
+.md blockquote {
+  border-left: 3px solid var(--accent);
+  background: rgba(124,58,237,0.06);
+  padding: 10px 16px;
+  border-radius: 0 8px 8px 0;
+  margin: 14px 0 20px;
+  color: var(--text-sub);
+  font-size: 13px;
+}
+.md blockquote p { margin-bottom: 0; color: inherit; }
+
+/* Hr */
+.md hr {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 28px 0;
+}
+
+/* Strong / Em */
+.md strong { color: var(--gold); font-weight: 700; }
+.md em { color: var(--blue); font-style: normal; font-weight: 600; }
+
+/* =====================================================
+   TOC (Table of Contents)
+===================================================== */
+.toc-box {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  border-radius: 8px;
+  padding: 16px 18px;
+  margin-bottom: 28px;
+}
+.toc-title {
+  font-size: 11px; font-weight: 700;
+  color: var(--text-sub);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+.toc-list { list-style: none; }
+.toc-list li { margin-bottom: 4px; }
+.toc-list a {
+  color: var(--text-sub);
+  text-decoration: none;
+  font-size: 13px;
+  display: flex; align-items: center; gap: 6px;
+  transition: color .15s;
+}
+.toc-list a:hover { color: var(--accent-lt); }
+.toc-list a::before {
+  content: '›';
+  color: var(--accent);
+  font-size: 14px;
+}
+
+/* =====================================================
+   ERROR
+===================================================== */
+.error-box {
+  background: #2a0a0a;
+  border: 1px solid var(--red);
+  border-radius: 8px;
+  padding: 16px;
+  color: var(--red);
+  font-size: 13px;
+  margin: 20px 0;
+}
+
+/* =====================================================
+   SCROLL TO TOP
+===================================================== */
+.to-top {
+  position: fixed;
+  bottom: 20px; right: 16px;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  font-size: 18px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 4px 12px rgba(124,58,237,0.4);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .25s, transform .25s;
+  z-index: 50;
+}
+.to-top.show { opacity: 1; pointer-events: auto; }
+.to-top:active { transform: scale(0.92); }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <span class="header-logo">HONO MINIFORGE</span>
+  <span class="header-title">📖 マニュアル</span>
+  <a href="/sheet.html" class="back-btn">← Sheet</a>
+</header>
+
+<!-- TAB NAV -->
+<nav class="tab-nav">
+  <button class="tab-btn active" data-tab="android" onclick="switchTab('android', this)">
+    📱 Android 向け
+  </button>
+  <button class="tab-btn" data-tab="app" onclick="switchTab('app', this)">
+    💻 開発者・アプリ向け
+  </button>
+</nav>
+
+<!-- CONTENT -->
+<div class="content">
+  <div id="mdContent" class="md">
+    <div class="loading">
+      <div class="spinner"></div><br>読み込み中...
+    </div>
+  </div>
+</div>
+
+<!-- SCROLL TO TOP -->
+<button class="to-top" id="toTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<script>
+'use strict';
+
+const SOURCES = {
+  android: '/docs/manual-android.md',
+  app:     '/docs/manual-app.md',
+};
+
+let currentTab = 'android';
+const cache = {};
+
+// --------------------------------------------------
+// タブ切替
+// --------------------------------------------------
+function switchTab(tab, btn) {
+  currentTab = tab;
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  loadMd(tab);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// --------------------------------------------------
+// MD 読み込み & レンダリング
+// --------------------------------------------------
+async function loadMd(tab) {
+  const el = document.getElementById('mdContent');
+  if (cache[tab]) { render(el, cache[tab]); return; }
+
+  el.innerHTML = '<div class="loading"><div class="spinner"></div><br>読み込み中...</div>';
+
+  try {
+    const res = await fetch(SOURCES[tab]);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const text = await res.text();
+    cache[tab] = text;
+    render(el, text);
+  } catch (e) {
+    el.innerHTML = `<div class="error-box">❌ マニュアルの読み込みに失敗しました。<br>${e.message}</div>`;
+  }
+}
+
+// --------------------------------------------------
+// レンダリング + TOC 生成
+// --------------------------------------------------
+function render(el, mdText) {
+  // marked でレンダリング
+  const html = marked.parse(mdText, { breaks: true, gfm: true });
+  el.innerHTML = html;
+
+  // h2 に id を付与して TOC 生成
+  const headings = el.querySelectorAll('h2');
+  if (headings.length > 0) {
+    const toc = document.createElement('div');
+    toc.className = 'toc-box';
+    toc.innerHTML = '<div class="toc-title">Contents</div><ul class="toc-list"></ul>';
+    const ul = toc.querySelector('ul');
+
+    headings.forEach((h, i) => {
+      const id = 'section-' + i;
+      h.id = id;
+      const li = document.createElement('li');
+      li.innerHTML = `<a href="#${id}">${h.textContent}</a>`;
+      ul.appendChild(li);
+    });
+
+    el.insertBefore(toc, el.firstChild);
+  }
+}
+
+// --------------------------------------------------
+// Scroll to top ボタン
+// --------------------------------------------------
+const toTop = document.getElementById('toTop');
+window.addEventListener('scroll', () => {
+  toTop.classList.toggle('show', window.scrollY > 300);
+}, { passive: true });
+
+// --------------------------------------------------
+// 初期ロード
+// --------------------------------------------------
+loadMd('android');
+</script>
+</body>
+</html>
