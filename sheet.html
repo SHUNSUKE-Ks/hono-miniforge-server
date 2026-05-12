@@ -1,0 +1,951 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>ノベルゲーム初期生成シート — Novel Game Forge</title>
+<style>
+/* =====================================================
+   BASE & CSS VARIABLES
+===================================================== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:           #0d1117;
+  --bg-card:      #161b22;
+  --bg-input:     #0d1117;
+  --border:       #30363d;
+  --border-focus: #6e40c9;
+  --text:         #e6edf3;
+  --text-sub:     #8b949e;
+  --text-muted:   #3d4551;
+  --accent:       #7c3aed;
+  --accent-light: #a78bfa;
+  --accent-glow:  rgba(124,58,237,0.25);
+  --gold:         #d4a017;
+  --gold-lt:      #fbbf24;
+  --red:          #f87171;
+  --green:        #34d399;
+  --blue:         #60a5fa;
+  --r:            12px;
+  --gap:          20px;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Segoe UI', 'Noto Sans JP', system-ui, sans-serif;
+  font-size: 14px;
+  line-height: 1.6;
+  padding-bottom: 90px;
+}
+
+/* =====================================================
+   HEADER
+===================================================== */
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: linear-gradient(180deg, #130a24 0%, #0d1117 100%);
+  border-bottom: 1px solid var(--border-focus);
+  padding: 14px 16px 10px;
+}
+.header-top {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+.header-badge {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: var(--accent-light);
+  background: rgba(124,58,237,0.15);
+  padding: 2px 8px;
+  border-radius: 20px;
+  border: 1px solid var(--border-focus);
+}
+.header-title {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--text);
+  letter-spacing: 0.5px;
+}
+.header-title em { color: var(--gold-lt); font-style: normal; }
+.progress-wrap {
+  height: 3px;
+  background: var(--border);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent), var(--gold-lt));
+  border-radius: 3px;
+  transition: width 0.4s ease;
+  width: 0%;
+}
+.progress-label {
+  font-size: 10px;
+  color: var(--text-sub);
+  margin-top: 4px;
+  text-align: right;
+}
+
+/* =====================================================
+   CONTAINER
+===================================================== */
+.container {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 20px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap);
+}
+
+/* =====================================================
+   SECTION CARD
+===================================================== */
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  overflow: hidden;
+}
+.card.glow { border-color: var(--border-focus); box-shadow: 0 0 24px var(--accent-glow); }
+.card.gold  { border-color: var(--gold); }
+
+.card-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  background: rgba(255,255,255,0.02);
+  border-bottom: 1px solid var(--border);
+}
+.card-icon { font-size: 17px; }
+.card-title {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--accent-light);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+.card-tag {
+  margin-left: auto;
+  font-size: 9px;
+  color: var(--text-sub);
+  background: rgba(255,255,255,0.04);
+  padding: 2px 8px;
+  border-radius: 20px;
+  letter-spacing: 1px;
+  border: 1px solid var(--border);
+}
+.card-body {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* =====================================================
+   FORM ELEMENTS
+===================================================== */
+.field { display: flex; flex-direction: column; gap: 5px; }
+
+.label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-sub);
+  letter-spacing: 0.5px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.label .req { color: var(--red); }
+.label .hint { color: #3d4551; font-weight: 400; font-size: 10px; }
+
+input[type="text"],
+textarea,
+select {
+  width: 100%;
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+  font-family: inherit;
+  font-size: 14px;
+  padding: 10px 12px;
+  transition: border-color .2s, box-shadow .2s;
+  -webkit-appearance: none;
+  appearance: none;
+}
+input[type="text"]:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-glow);
+}
+textarea { resize: vertical; min-height: 76px; line-height: 1.7; }
+::placeholder { color: var(--text-muted); }
+
+.row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+/* =====================================================
+   THUMBNAIL UPLOAD
+===================================================== */
+.thumb-row { display: flex; gap: 14px; align-items: flex-start; }
+.thumb-box {
+  width: 84px; height: 84px;
+  border-radius: 10px;
+  border: 2px dashed var(--border);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  overflow: hidden;
+  cursor: pointer;
+  transition: border-color .2s, background .2s;
+  background: var(--bg-input);
+  position: relative;
+}
+.thumb-box:hover { border-color: var(--accent); background: rgba(124,58,237,0.08); }
+.thumb-box img { width: 100%; height: 100%; object-fit: cover; }
+.thumb-icon { font-size: 26px; opacity: 0.25; }
+.thumb-hint {
+  position: absolute;
+  bottom: 3px;
+  font-size: 8px;
+  color: var(--text-sub);
+  text-align: center;
+  letter-spacing: 0.5px;
+}
+input[type="file"] { display: none; }
+.thumb-fields { flex: 1; display: flex; flex-direction: column; gap: 10px; }
+
+/* =====================================================
+   CHAR SECTION
+===================================================== */
+.char-block {
+  border-left: 3px solid var(--accent);
+  padding-left: 14px;
+}
+.char-block.hero { border-color: var(--gold); }
+.char-role {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--accent-light);
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.char-block.hero .char-role { color: var(--gold-lt); }
+
+/* =====================================================
+   SYSTEM CHECKBOXES
+===================================================== */
+.sys-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+@media (min-width: 380px) { .sys-grid { grid-template-columns: repeat(3, 1fr); } }
+@media (min-width: 540px) { .sys-grid { grid-template-columns: repeat(4, 1fr); } }
+
+.sys-btn {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 9px 10px;
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all .15s;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.sys-btn:hover { border-color: var(--accent); }
+.sys-btn.on {
+  border-color: var(--accent);
+  background: rgba(124,58,237,0.15);
+}
+.sys-btn-icon { font-size: 15px; }
+.sys-btn-label { font-size: 12px; color: var(--text-sub); }
+.sys-btn.on .sys-btn-label { color: var(--accent-light); }
+
+/* =====================================================
+   CODE BLOCK
+===================================================== */
+.code-wrap {
+  background: #010409;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+.code-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 12px;
+  background: rgba(255,255,255,0.03);
+  border-bottom: 1px solid var(--border);
+}
+.code-lang-tag {
+  font-size: 10px;
+  color: var(--text-sub);
+  letter-spacing: 1px;
+  font-family: monospace;
+}
+.copy-btn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-sub);
+  padding: 3px 10px;
+  border-radius: 5px;
+  font-size: 11px;
+  cursor: pointer;
+  transition: all .15s;
+  font-family: inherit;
+}
+.copy-btn:hover { border-color: var(--accent); color: var(--accent-light); }
+.copy-btn.ok { border-color: var(--green); color: var(--green); }
+
+textarea.code-ta {
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  font-family: 'Consolas', 'Fira Code', 'Monaco', monospace;
+  font-size: 12px;
+  color: #a3e635;
+  padding: 12px;
+  min-height: 110px;
+  box-shadow: none !important;
+}
+textarea.code-ta:focus { border-color: transparent; box-shadow: none !important; }
+
+/* =====================================================
+   API PREVIEW
+===================================================== */
+.api-box {
+  background: #010409;
+  border: 1px solid #1e3a5f;
+  border-radius: 8px;
+  overflow: hidden;
+}
+.api-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: rgba(29,78,216,0.08);
+  border-bottom: 1px solid #1e3a5f;
+}
+.api-badge {
+  font-size: 9px;
+  font-weight: 700;
+  color: #34d399;
+  background: #065f46;
+  padding: 2px 7px;
+  border-radius: 3px;
+  letter-spacing: 1px;
+}
+.api-path {
+  font-size: 11px;
+  color: var(--blue);
+  font-family: monospace;
+  flex: 1;
+}
+.api-pre {
+  padding: 12px;
+  font-family: 'Consolas', 'Fira Code', monospace;
+  font-size: 11px;
+  color: #a3e635;
+  white-space: pre-wrap;
+  word-break: break-all;
+  max-height: 220px;
+  overflow-y: auto;
+  line-height: 1.6;
+}
+
+/* =====================================================
+   DIVIDER
+===================================================== */
+.divider { height: 1px; background: var(--border); margin: 4px 0; }
+
+/* =====================================================
+   BOTTOM ACTION BAR
+===================================================== */
+.action-bar {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  background: rgba(13,17,23,0.96);
+  border-top: 1px solid var(--border);
+  padding: 10px 14px;
+  display: flex;
+  gap: 10px;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  z-index: 200;
+}
+.btn {
+  flex: 1;
+  padding: 13px 10px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: transform .12s, opacity .12s;
+  -webkit-tap-highlight-color: transparent;
+  font-family: inherit;
+}
+.btn:active { transform: scale(0.96); }
+.btn-primary {
+  background: linear-gradient(135deg, #5b21b6, #7c3aed);
+  color: #fff;
+  box-shadow: 0 4px 16px var(--accent-glow);
+}
+.btn-secondary {
+  background: var(--bg-card);
+  color: var(--text-sub);
+  border: 1px solid var(--border);
+}
+
+/* =====================================================
+   TOAST
+===================================================== */
+.toast {
+  position: fixed;
+  bottom: 80px;
+  left: 50%;
+  transform: translateX(-50%) translateY(16px);
+  background: #0a2a1a;
+  border: 1px solid var(--green);
+  color: var(--green);
+  padding: 9px 20px;
+  border-radius: 20px;
+  font-size: 13px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .25s, transform .25s;
+  z-index: 300;
+  white-space: nowrap;
+}
+.toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* =====================================================
+   RESPONSIVE
+===================================================== */
+@media (max-width: 360px) {
+  .header-title { font-size: 16px; }
+  .btn { font-size: 13px; padding: 12px 8px; }
+}
+</style>
+</head>
+<body>
+
+<!-- =====================================================
+     HEADER
+===================================================== -->
+<header class="header">
+  <div class="header-top">
+    <span class="header-badge">NOVEL GAME FORGE</span>
+    <h1 class="header-title">初期生成<em>シート</em></h1>
+  </div>
+  <div class="progress-wrap">
+    <div class="progress-fill" id="progressFill"></div>
+  </div>
+  <div class="progress-label" id="progressLabel">0 / 18 項目入力済み</div>
+</header>
+
+<div class="container">
+
+  <!-- =====================================================
+       META: Project Info
+  ===================================================== -->
+  <div class="card glow">
+    <div class="card-head">
+      <span class="card-icon">📋</span>
+      <span class="card-title">Project Info</span>
+      <span class="card-tag">META</span>
+    </div>
+    <div class="card-body">
+
+      <div class="thumb-row">
+        <div class="thumb-box" id="thumbBox" onclick="document.getElementById('thumbFile').click()" title="タップしてサムネを選択">
+          <span class="thumb-icon" id="thumbIcon">🖼️</span>
+          <span class="thumb-hint">TAP</span>
+        </div>
+        <input type="file" id="thumbFile" accept="image/*" onchange="onThumb(event)">
+        <div class="thumb-fields">
+          <div class="field">
+            <label class="label" for="meta_label">
+              表示名（ラベル）<span class="req">*</span>
+              <span class="hint">日本語OK</span>
+            </label>
+            <input type="text" id="meta_label" placeholder="例：灰の騎士と魔導帝国" oninput="tick()">
+          </div>
+          <div class="field">
+            <label class="label" for="meta_id">
+              ファイルID
+              <span class="hint">英数字・_ のみ</span>
+            </label>
+            <input type="text" id="meta_id" placeholder="例：gray_knight_001"
+              oninput="tick(); syncApiPath()" pattern="[a-zA-Z0-9_\-]+">
+          </div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="label" for="meta_memo">概要メモ</label>
+        <textarea id="meta_memo" placeholder="このゲームの一言説明、世界の印象など..." rows="2" oninput="tick()"></textarea>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- =====================================================
+       WORLD
+  ===================================================== -->
+  <div class="card">
+    <div class="card-head">
+      <span class="card-icon">🌍</span>
+      <span class="card-title">World</span>
+      <span class="card-tag">世界観</span>
+    </div>
+    <div class="card-body">
+
+      <div class="row2">
+        <div class="field">
+          <label class="label" for="w_name">世界名</label>
+          <input type="text" id="w_name" placeholder="魔導帝国アルヴァン" oninput="tick()">
+        </div>
+        <div class="field">
+          <label class="label" for="w_civ">文明レベル</label>
+          <input type="text" id="w_civ" placeholder="中世・魔法文明" oninput="tick()">
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="label" for="w_power">支配構造</label>
+        <input type="text" id="w_power" placeholder="皇帝制・魔導議会が実権を握る" oninput="tick()">
+      </div>
+
+      <div class="field">
+        <label class="label" for="w_taboo">禁忌</label>
+        <textarea id="w_taboo" placeholder="禁忌魔法の使用、過去の大戦への言及..." rows="2" oninput="tick()"></textarea>
+      </div>
+
+      <div class="field">
+        <label class="label" for="w_problem">世界が抱える問題</label>
+        <textarea id="w_problem" placeholder="魔力の枯渇、民族対立、封印が解かれつつある古の魔物..." rows="2" oninput="tick()"></textarea>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- =====================================================
+       CHARACTERS
+  ===================================================== -->
+  <div class="card">
+    <div class="card-head">
+      <span class="card-icon">👤</span>
+      <span class="card-title">Characters</span>
+      <span class="card-tag">登場人物</span>
+    </div>
+    <div class="card-body">
+
+      <!-- 主人公 -->
+      <div class="char-block">
+        <div class="char-role">⚔ Protagonist — 主人公</div>
+        <div class="field" style="margin-bottom:10px">
+          <label class="label" for="p_name">名前</label>
+          <input type="text" id="p_name" placeholder="灰騎士 レイン" oninput="tick()">
+        </div>
+        <div class="field" style="margin-bottom:10px">
+          <label class="label" for="p_purpose">目的</label>
+          <input type="text" id="p_purpose" placeholder="失われた故郷を取り戻す" oninput="tick()">
+        </div>
+        <div class="row2">
+          <div class="field">
+            <label class="label" for="p_fear">恐怖</label>
+            <input type="text" id="p_fear" placeholder="孤独" oninput="tick()">
+          </div>
+          <div class="field">
+            <label class="label" for="p_flaw">欠点</label>
+            <input type="text" id="p_flaw" placeholder="他者を頼れない" oninput="tick()">
+          </div>
+        </div>
+        <div class="field" style="margin-top:10px">
+          <label class="label" for="p_fight">戦う理由</label>
+          <textarea id="p_fight" placeholder="守りたいものが、まだ残っている..." rows="2" oninput="tick()"></textarea>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- ヒロイン -->
+      <div class="char-block hero" style="margin-top:4px">
+        <div class="char-role">✨ Heroine / Key Person — 重要人物</div>
+        <div class="field" style="margin-bottom:10px">
+          <label class="label" for="h_name">名前</label>
+          <input type="text" id="h_name" placeholder="アルマ・フォン・エルシア" oninput="tick()">
+        </div>
+        <div class="field" style="margin-bottom:10px">
+          <label class="label" for="h_rel">主人公との関係</label>
+          <input type="text" id="h_rel" placeholder="幼馴染・現在は敵対勢力の姫" oninput="tick()">
+        </div>
+        <div class="field">
+          <label class="label" for="h_secret">隠し事</label>
+          <textarea id="h_secret" placeholder="実は主人公の故郷崩壊を事前に知っていた..." rows="2" oninput="tick()"></textarea>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- =====================================================
+       GAME SYSTEMS
+  ===================================================== -->
+  <div class="card">
+    <div class="card-head">
+      <span class="card-icon">⚙️</span>
+      <span class="card-title">Game Systems</span>
+      <span class="card-tag">必要システム</span>
+    </div>
+    <div class="card-body">
+      <div class="label" style="margin-bottom:4px">採用するシステム（複数選択可）</div>
+      <div class="sys-grid" id="sysGrid"></div>
+    </div>
+  </div>
+
+  <!-- =====================================================
+       SCENARIO
+  ===================================================== -->
+  <div class="card">
+    <div class="card-head">
+      <span class="card-icon">📖</span>
+      <span class="card-title">Scenario Intro</span>
+      <span class="card-tag">シナリオ導入</span>
+    </div>
+    <div class="card-body">
+
+      <div class="field">
+        <label class="label" for="sc_incident">最初の事件</label>
+        <textarea id="sc_incident" placeholder="帝都で起きた魔力暴走事件。主人公は現場に居合わせる..." rows="2" oninput="tick()"></textarea>
+      </div>
+
+      <div class="field">
+        <label class="label" for="sc_obj">プレイヤーの目的</label>
+        <textarea id="sc_obj" placeholder="真相を追いながら、失われた故郷の手がかりを探す" rows="2" oninput="tick()"></textarea>
+      </div>
+
+      <div class="field">
+        <label class="label" for="sc_ch1">第一章 開始イベント</label>
+        <textarea id="sc_ch1" placeholder="「お前が灰騎士か。私と来い」——謎の少女との邂逅" rows="2" oninput="tick()"></textarea>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- =====================================================
+       CUSTOM CODE
+  ===================================================== -->
+  <div class="card">
+    <div class="card-head">
+      <span class="card-icon">💻</span>
+      <span class="card-title">Custom Code / Notes</span>
+      <span class="card-tag">追加記述</span>
+    </div>
+    <div class="card-body">
+      <div class="label" style="margin-bottom:6px">
+        独自フラグ・追加キャラ・システムメモなど
+      </div>
+      <div class="code-wrap">
+        <div class="code-header">
+          <span class="code-lang-tag">JSON / TEXT</span>
+          <button class="copy-btn" onclick="copyEl('customCode', this)">⎘ Copy</button>
+        </div>
+        <textarea class="code-ta" id="customCode"
+          placeholder="// 自由記述欄&#10;// フラグ定義・追加キャラ・特殊システムメモなど"></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- =====================================================
+       API PREVIEW
+  ===================================================== -->
+  <div class="card">
+    <div class="card-head">
+      <span class="card-icon">🔌</span>
+      <span class="card-title">API Preview</span>
+      <span class="card-tag">納品形式</span>
+    </div>
+    <div class="card-body">
+      <div class="label" style="margin-bottom:8px">
+        Hono API から返却される JSON 形式のプレビュー
+      </div>
+      <div class="api-box">
+        <div class="api-header">
+          <span class="api-badge">GET</span>
+          <span class="api-path">/api/novel/sheet/<span id="apiId">:id</span></span>
+          <button class="copy-btn" onclick="copyPre('apiPre', this)">⎘ Copy</button>
+        </div>
+        <pre class="api-pre" id="apiPre">— JSON Export を押すとプレビューがここに表示されます —</pre>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /container -->
+
+<!-- =====================================================
+     ACTION BAR
+===================================================== -->
+<div class="action-bar">
+  <button class="btn btn-secondary" onclick="clearAll()">🗑 クリア</button>
+  <button class="btn btn-primary" onclick="doExport()">⬇ JSON Export</button>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- =====================================================
+     JAVASCRIPT
+===================================================== -->
+<script>
+'use strict';
+
+// --------------------------------------------------
+// SYSTEM DEFINITIONS
+// --------------------------------------------------
+const SYSTEMS = [
+  { id:'branch',    label:'分岐',        icon:'🔀' },
+  { id:'affection', label:'好感度',      icon:'💖' },
+  { id:'explore',   label:'探索',        icon:'🗺' },
+  { id:'item',      label:'アイテム',    icon:'🎒' },
+  { id:'battle',    label:'戦闘',        icon:'⚔️' },
+  { id:'glossary',  label:'用語辞典',    icon:'📚' },
+  { id:'cg',        label:'CG収集',      icon:'🖼' },
+  { id:'multiend',  label:'マルチエンド',icon:'🏁' },
+];
+
+const sysSelected = new Set();
+let thumbBase64 = null;
+
+// --------------------------------------------------
+// INIT: システムボタン生成
+// --------------------------------------------------
+(function initSys() {
+  const grid = document.getElementById('sysGrid');
+  SYSTEMS.forEach(s => {
+    const div = document.createElement('div');
+    div.className = 'sys-btn';
+    div.id = 'sys_' + s.id;
+    div.innerHTML = `<span class="sys-btn-icon">${s.icon}</span><span class="sys-btn-label">${s.label}</span>`;
+    div.addEventListener('click', () => {
+      if (sysSelected.has(s.id)) {
+        sysSelected.delete(s.id);
+        div.classList.remove('on');
+      } else {
+        sysSelected.add(s.id);
+        div.classList.add('on');
+      }
+      tick();
+    });
+    grid.appendChild(div);
+  });
+})();
+
+// --------------------------------------------------
+// THUMBNAIL
+// --------------------------------------------------
+function onThumb(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    thumbBase64 = ev.target.result;
+    const box = document.getElementById('thumbBox');
+    box.innerHTML = `<img src="${thumbBase64}" alt="thumb">`;
+  };
+  reader.readAsDataURL(file);
+}
+
+// --------------------------------------------------
+// PROGRESS
+// --------------------------------------------------
+const TRACK_IDS = [
+  'meta_label','meta_id',
+  'w_name','w_civ','w_power','w_taboo','w_problem',
+  'p_name','p_purpose','p_fear','p_flaw','p_fight',
+  'h_name','h_rel','h_secret',
+  'sc_incident','sc_obj','sc_ch1',
+];
+
+function tick() {
+  let n = TRACK_IDS.filter(id => {
+    const el = document.getElementById(id);
+    return el && el.value.trim().length > 0;
+  }).length;
+  if (sysSelected.size > 0) n++;
+  const total = TRACK_IDS.length + 1;
+  const pct = Math.round(n / total * 100);
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('progressLabel').textContent = `${n} / ${total} 項目入力済み`;
+  syncApiPath();
+}
+
+function syncApiPath() {
+  const id = document.getElementById('meta_id').value.trim() || ':id';
+  document.getElementById('apiId').textContent = id;
+}
+
+// --------------------------------------------------
+// BUILD JSON
+// --------------------------------------------------
+function g(id) { return document.getElementById(id)?.value.trim() ?? ''; }
+
+function buildJson() {
+  return {
+    meta: {
+      schema_version: '1.0',
+      label:       g('meta_label'),
+      id:          g('meta_id') || 'untitled',
+      memo:        g('meta_memo'),
+      thumbnail:   thumbBase64 ?? null,
+      created_at:  new Date().toISOString(),
+    },
+    world: {
+      name:         g('w_name'),
+      civilization: g('w_civ'),
+      power:        g('w_power'),
+      taboo:        g('w_taboo'),
+      problem:      g('w_problem'),
+    },
+    characters: [
+      {
+        characterID:  'CHAR_001',
+        role:         'protagonist',
+        name:         g('p_name'),
+        purpose:      g('p_purpose'),
+        fear:         g('p_fear'),
+        flaw:         g('p_flaw'),
+        fight_reason: g('p_fight'),
+      },
+      {
+        characterID:  'CHAR_002',
+        role:         'heroine',
+        name:         g('h_name'),
+        relationship: g('h_rel'),
+        secret:       g('h_secret'),
+      },
+    ],
+    systems: [...sysSelected],
+    scenario: {
+      first_incident:   g('sc_incident'),
+      player_objective: g('sc_obj'),
+      chapter1_event:   g('sc_ch1'),
+    },
+    custom_code:    g('customCode') || null,
+    _api_endpoint:  `/api/novel/sheet/${g('meta_id') || 'untitled'}`,
+  };
+}
+
+// --------------------------------------------------
+// EXPORT
+// --------------------------------------------------
+function doExport() {
+  const json = buildJson();
+  const str  = JSON.stringify(json, null, 2);
+
+  // API プレビュー更新
+  document.getElementById('apiPre').textContent = str;
+
+  // ダウンロード
+  const blob = new Blob([str], { type: 'application/json' });
+  const url  = URL.createObjectURL(blob);
+  const a    = Object.assign(document.createElement('a'), { href: url, download: `${json.meta.id}_sheet.json` });
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+
+  toast('✅ JSON をエクスポートしました');
+}
+
+// --------------------------------------------------
+// COPY HELPERS
+// --------------------------------------------------
+function copyText(text, btn) {
+  if (!text.trim()) { toast('⚠ コピーする内容がありません'); return; }
+  navigator.clipboard.writeText(text).then(() => {
+    btn.classList.add('ok');
+    btn.textContent = '✓ Copied!';
+    setTimeout(() => { btn.classList.remove('ok'); btn.textContent = '⎘ Copy'; }, 2000);
+  }).catch(() => toast('⚠ コピーに失敗しました'));
+}
+function copyEl(id, btn)  { copyText(document.getElementById(id)?.value ?? '', btn); }
+function copyPre(id, btn) { copyText(document.getElementById(id)?.textContent ?? '', btn); }
+
+// --------------------------------------------------
+// CLEAR
+// --------------------------------------------------
+function clearAll() {
+  if (!confirm('入力内容をすべてクリアしますか？')) return;
+  TRACK_IDS.forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+  document.getElementById('meta_memo').value = '';
+  document.getElementById('customCode').value = '';
+  sysSelected.clear();
+  document.querySelectorAll('.sys-btn').forEach(b => b.classList.remove('on'));
+  thumbBase64 = null;
+  document.getElementById('thumbBox').innerHTML = '<span class="thumb-icon">🖼️</span><span class="thumb-hint">TAP</span>';
+  document.getElementById('thumbFile').value = '';
+  document.getElementById('apiPre').textContent = '— JSON Export を押すとプレビューがここに表示されます —';
+  tick();
+  toast('🗑 クリアしました');
+}
+
+// --------------------------------------------------
+// TOAST
+// --------------------------------------------------
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(el._t);
+  el._t = setTimeout(() => el.classList.remove('show'), 2600);
+}
+
+// --------------------------------------------------
+// FUTURE: Hono POST（実装準備済み・コメントアウト）
+// --------------------------------------------------
+// async function saveToServer(json) {
+//   const res = await fetch('/api/novel/sheet', {
+//     method: 'POST',
+//     headers: { 'Content-Type': 'application/json' },
+//     body: JSON.stringify(json),
+//   });
+//   const result = await res.json();
+//   toast(result.status === 'ok' ? '✅ サーバーに保存しました' : `❌ ${result.error}`);
+// }
+</script>
+
+</body>
+</html>
